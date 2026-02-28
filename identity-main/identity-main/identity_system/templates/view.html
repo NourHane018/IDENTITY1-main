@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Identity Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .section-title {
+            color: #0d6efd;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+
+        <h2 class="mb-4 text-center">Identity Details - {{ person['id'] }}</h2>
+
+        <!-- Common Data Section -->
+        <h5 class="section-title">Common Data</h5>
+        <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>ID</strong>
+                <span>{{ person['id'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Identity Category</strong>
+                <span>{{ person['type'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Sub-Category</strong>
+                <span>{{ person['sub_category'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>First Name</strong>
+                <span>{{ person['first_name'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Last Name</strong>
+                <span>{{ person['last_name'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Date of Birth</strong>
+                <span>{{ person['dob'] or 'N/A' }}</span>
+            </li>
+            {% if person['place_of_birth'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Place of Birth</strong>
+                <span>{{ person['place_of_birth'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['nationality'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Nationality</strong>
+                <span>{{ person['nationality'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['gender'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Gender</strong>
+                <span>{{ person['gender'] }}</span>
+            </li>
+            {% endif %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Email Address</strong>
+                <span>{{ person['email'] }}</span>
+            </li>
+            {% if person['phone'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Phone Number</strong>
+                <span>{{ person['phone'] }}</span>
+            </li>
+            {% endif %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Status</strong>
+                <span><span class="badge bg-secondary">{{ person['status'] }}</span></span>
+            </li>
+        </ul>
+
+        <!-- Student Information Section -->
+        {% if person['sub_category'] in ['Undergraduate', 'Continuing Education', 'PhD Candidates', 'International/Exchange'] %}
+        <h5 class="section-title">Student Information</h5>
+        <ul class="list-group mb-3">
+            {% if person['student_high_school_diploma_type'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>High School Diploma Type</strong>
+                <span>{{ person['student_high_school_diploma_type'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['student_high_school_diploma_year'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Diploma Year</strong>
+                <span>{{ person['student_high_school_diploma_year'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['student_high_school_honors'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Honors</strong>
+                <span>{{ person['student_high_school_honors'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['student_major'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Major/Program</strong>
+                <span>{{ person['student_major'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['student_entry_year'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Entry Year</strong>
+                <span>{{ person['student_entry_year'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['student_faculty_department'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Faculty & Department</strong>
+                <span>{{ person['student_faculty_department'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['student_group'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Group</strong>
+                <span>{{ person['student_group'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['student_scholarship_status'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Scholarship Status</strong>
+                <span>{{ person['student_scholarship_status'] }}</span>
+            </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+
+        <!-- Faculty Information Section -->
+        {% if person['sub_category'] in ['Tenured', 'Adjunct/Part-time', 'Visiting Researchers'] %}
+        <h5 class="section-title">Faculty Information</h5>
+        <ul class="list-group mb-3">
+            {% if person['faculty_rank'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Rank</strong>
+                <span>{{ person['faculty_rank'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_employment_category'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Employment Category</strong>
+                <span>{{ person['faculty_employment_category'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_appointment_start_date'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Appointment Start Date</strong>
+                <span>{{ person['faculty_appointment_start_date'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_primary_department'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Primary Department</strong>
+                <span>{{ person['faculty_primary_department'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_secondary_departments'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Secondary Departments</strong>
+                <span>{{ person['faculty_secondary_departments'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_office_building'] or person['faculty_office_floor'] or person['faculty_office_room'] %}
+            <li class="list-group-item">
+                <strong>Office Location:</strong>
+                {% if person['faculty_office_building'] %} {{ person['faculty_office_building'] }}{% endif %}
+                {% if person['faculty_office_floor'] %}/ Floor {{ person['faculty_office_floor'] }}{% endif %}
+                {% if person['faculty_office_room'] %}/ Room {{ person['faculty_office_room'] }}{% endif %}
+            </li>
+            {% endif %}
+            {% if person['faculty_phd_institution'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>PhD Institution</strong>
+                <span>{{ person['faculty_phd_institution'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_research_areas'] %}
+            <li class="list-group-item">
+                <strong>Research Areas</strong><br>
+                <span>{{ person['faculty_research_areas'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_habilitation_supervise'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Habilitation to Supervise Research</strong>
+                <span>{{ person['faculty_habilitation_supervise'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['faculty_contract_type'] %}
+            <li class="list-group-item">
+                <strong>Contract Information:</strong> {{ person['faculty_contract_type'] }}
+                {% if person['faculty_contract_start_date'] %} (Start: {{ person['faculty_contract_start_date'] }}){% endif %}
+                {% if person['faculty_contract_end_date'] %} (End: {{ person['faculty_contract_end_date'] }}){% endif %}
+            </li>
+            {% endif %}
+            {% if person['faculty_teaching_hours'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Teaching Hours</strong>
+                <span>{{ person['faculty_teaching_hours'] }}</span>
+            </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+
+        <!-- Staff Information Section -->
+        {% if person['sub_category'] in ['Administrative', 'Technical', 'Temporary'] %}
+        <h5 class="section-title">Staff Information</h5>
+        <ul class="list-group mb-3">
+            {% if person['staff_assigned_department'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Assigned Department/Service</strong>
+                <span>{{ person['staff_assigned_department'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['staff_job_title'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Job Title</strong>
+                <span>{{ person['staff_job_title'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['staff_grade'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Grade</strong>
+                <span>{{ person['staff_grade'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['staff_entry_date'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Date of Entry to University</strong>
+                <span>{{ person['staff_entry_date'] }}</span>
+            </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+
+        <!-- External Member Information Section -->
+        {% if person['sub_category'] in ['Contractors/Vendors', 'Alumni'] %}
+        <h5 class="section-title">External Member Information</h5>
+        <ul class="list-group mb-3">
+            {% if person['external_organization'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Organization</strong>
+                <span>{{ person['external_organization'] }}</span>
+            </li>
+            {% endif %}
+            {% if person['external_contact_person'] %}
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>Contact Person</strong>
+                <span>{{ person['external_contact_person'] }}</span>
+            </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+
+        <!-- Change History Section -->
+        {% if audits %}
+        <h5 class="section-title">Change History</h5>
+        <ul class="list-group">
+            {% for a in audits %}
+            <li class="list-group-item">
+                <small class="text-muted d-block">{{ a['changed_at'] }}</small>
+                <strong>{{ a['field'] }}</strong>: "{{ a['old_value'] }}" → "{{ a['new_value'] }}"
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-secondary me-2">Home</a>
+            <a href="/view_all" class="btn btn-secondary me-2">All Identities</a>
+            <a href="/edit/{{ person['id'] }}" class="btn btn-warning me-2">Edit</a>
+            <form method="POST" action="/delete/{{ person['id'] }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this identity?');">
+                <button type="submit" class="btn btn-danger">Delete Identity</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

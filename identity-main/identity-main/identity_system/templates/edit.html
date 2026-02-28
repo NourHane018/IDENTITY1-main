@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Identity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .category-section {
+            display: none;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            background-color: #f8f9fa;
+        }
+        .category-section.active {
+            display: block;
+        }
+        .section-title {
+            color: #495057;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .status-card {
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background-color: #f8f9fa;
+        }
+        .current-status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-suspended {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-inactive {
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+        .status-archived {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .status-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background-color: #f0f0f0;
+            border-left: 4px solid #0d6efd;
+            border-radius: 0.25rem;
+        }
+        .status-warning {
+            font-size: 0.9rem;
+            color: #856404;
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="mb-4 text-center">Edit Identity</h2>
+
+        {% if error %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        {% if person['status'] == 'Archived' %}
+        <div class="alert alert-warning" role="alert">
+            <strong>⚠️ Archived Record:</strong> This record is archived and cannot be edited.
+        </div>
+        {% endif %}
+
+        <form method="POST" {% if person['status'] == 'Archived' %}onsubmit="return false;"{% endif %} id="editForm">
+
+            <!-- Common Fields -->
+            <h5 class="mb-3">Common Data</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">First Name</label>
+                    <input type="text"
+                           name="first_name"
+                           class="form-control"
+                           value="{{person['first_name']}}"
+                           {% if person['status'] == 'Archived' %}disabled{% endif %}
+                           required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text"
+                           name="last_name"
+                           class="form-control"
+                           value="{{person['last_name']}}"
+                           {% if person['status'] == 'Archived' %}disabled{% endif %}
+                           required>
+                </div>
+            </div>
+
+            <!-- Student Fields -->
+            <div id="studentFields" class="category-section">
+                <h5 class="section-title">Student Information</h5>
+                <div class="mb-3">
+                    <label class="form-label">High School Diploma Type</label>
+                    <input type="text" name="student_high_school_diploma_type" class="form-control" value="{{person['student_high_school_diploma_type'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Diploma Year</label>
+                        <input type="number" name="student_high_school_diploma_year" class="form-control" value="{{person['student_high_school_diploma_year'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Honors</label>
+                        <input type="text" name="student_high_school_honors" class="form-control" value="{{person['student_high_school_honors'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Major/Program</label>
+                    <input type="text" name="student_major" class="form-control" value="{{person['student_major'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Entry Year</label>
+                    <input type="number" name="student_entry_year" class="form-control" value="{{person['student_entry_year'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Faculty & Department</label>
+                    <input type="text" name="student_faculty_department" class="form-control" value="{{person['student_faculty_department'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Group</label>
+                    <input type="text" name="student_group" class="form-control" value="{{person['student_group'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Scholarship Status</label>
+                    <select name="student_scholarship_status" class="form-select" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                        <option value="">Select</option>
+                        <option value="Yes" {% if person['student_scholarship_status']=='Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if person['student_scholarship_status']=='No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Faculty Fields -->
+            <div id="facultyFields" class="category-section">
+                <h5 class="section-title">Faculty Information</h5>
+                <div class="mb-3">
+                    <label class="form-label">Rank</label>
+                    <input type="text" name="faculty_rank" class="form-control" value="{{person['faculty_rank'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Employment Category</label>
+                    <input type="text" name="faculty_employment_category" class="form-control" value="{{person['faculty_employment_category'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Appointment Start Date</label>
+                    <input type="date" name="faculty_appointment_start_date" class="form-control" value="{{person['faculty_appointment_start_date'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Primary Department</label>
+                    <input type="text" name="faculty_primary_department" class="form-control" value="{{person['faculty_primary_department'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Secondary Departments</label>
+                    <input type="text" name="faculty_secondary_departments" class="form-control" value="{{person['faculty_secondary_departments'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <h6 class="mt-3 mb-2">Office Location</h6>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Building</label>
+                        <input type="text" name="faculty_office_building" class="form-control" value="{{person['faculty_office_building'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Floor</label>
+                        <input type="text" name="faculty_office_floor" class="form-control" value="{{person['faculty_office_floor'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Room</label>
+                        <input type="text" name="faculty_office_room" class="form-control" value="{{person['faculty_office_room'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">PhD Institution</label>
+                    <input type="text" name="faculty_phd_institution" class="form-control" value="{{person['faculty_phd_institution'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Research Areas</label>
+                    <textarea name="faculty_research_areas" class="form-control" rows="3" {% if person['status'] == 'Archived' %}disabled{% endif %}>{{person['faculty_research_areas'] or ''}}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Habilitation to Supervise Research</label>
+                    <select name="faculty_habilitation_supervise" class="form-select" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                        <option value="">Select</option>
+                        <option value="Yes" {% if person['faculty_habilitation_supervise']=='Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if person['faculty_habilitation_supervise']=='No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <h6 class="mt-3 mb-2">Contract Information</h6>
+                <div class="mb-3">
+                    <label class="form-label">Contract Type</label>
+                    <input type="text" name="faculty_contract_type" class="form-control" value="{{person['faculty_contract_type'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contract Start Date</label>
+                        <input type="date" name="faculty_contract_start_date" class="form-control" value="{{person['faculty_contract_start_date'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contract End Date</label>
+                        <input type="date" name="faculty_contract_end_date" class="form-control" value="{{person['faculty_contract_end_date'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Teaching Hours</label>
+                    <input type="number" name="faculty_teaching_hours" class="form-control" value="{{person['faculty_teaching_hours'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+            </div>
+
+            <!-- Staff Fields -->
+            <div id="staffFields" class="category-section">
+                <h5 class="section-title">Staff Information</h5>
+                <div class="mb-3">
+                    <label class="form-label">Assigned Department/Service</label>
+                    <input type="text" name="staff_assigned_department" class="form-control" value="{{person['staff_assigned_department'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" name="staff_job_title" class="form-control" value="{{person['staff_job_title'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Grade</label>
+                    <input type="text" name="staff_grade" class="form-control" value="{{person['staff_grade'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date of Entry to University</label>
+                    <input type="date" name="staff_entry_date" class="form-control" value="{{person['staff_entry_date'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+            </div>
+
+            <!-- External Fields -->
+            <div id="externalFields" class="category-section">
+                <h5 class="section-title">External Member Information</h5>
+                <div class="mb-3">
+                    <label class="form-label">Organization</label>
+                    <input type="text" name="external_organization" class="form-control" value="{{person['external_organization'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contact Person</label>
+                    <input type="text" name="external_contact_person" class="form-control" value="{{person['external_contact_person'] or ''}}" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                </div>
+            </div>
+
+            <!-- Status Management Section -->
+            <div class="status-card">
+                <h5 class="mb-3">Identity Status Management</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label">Current Status</label>
+                    <div>
+                        <span class="current-status status-{{ person['status'].lower() }}">
+                            {{ person['status'] }}
+                        </span>
+                    </div>
+                    {% if person['status'] == 'Inactive' and person.get('status_changed_at') %}
+                    <div class="status-info">
+                        <strong>Status changed at:</strong> {{ person['status_changed_at'] }}<br>
+                        <small>Must wait 5 years before archiving</small>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Change Status To</label>
+                    <select name="status" class="form-select" id="statusSelect" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                        <option value="">-- Select a status --</option>
+                        <option value="Pending" {% if person['status'] == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Active" {% if person['status'] == 'Active' %}selected{% endif %}>Active</option>
+                        <option value="Suspended" {% if person['status'] == 'Suspended' %}selected{% endif %}>Suspended</option>
+                        <option value="Inactive" {% if person['status'] == 'Inactive' %}selected{% endif %}>Inactive</option>
+                        <option value="Archived" {% if person['status'] == 'Archived' %}selected{% endif %} {% if person['status'] == 'Archived' %}disabled{% endif %}>Archived (Final State)</option>
+                    </select>
+                    <small class="form-text text-muted mt-2">
+                        {% if person['status'] == 'Active' %}
+                            Can transition to: <strong>Suspended</strong>
+                        {% elif person['status'] == 'Suspended' %}
+                            Can transition to: <strong>Active</strong>
+                        {% elif person['status'] == 'Inactive' %}
+                            Can transition to: <strong>Archived</strong> (only after 5 years)
+                        {% elif person['status'] == 'Pending' %}
+                            Can transition to: <strong>Active</strong>
+                        {% elif person['status'] == 'Archived' %}
+                            <strong>Final state - No transitions allowed</strong>
+                        {% endif %}
+                    </small>
+                    
+                    {% if person['status'] == 'Archived' %}
+                    <div class="status-warning">
+                        <strong>⚠️ Record Archived:</strong> This identity is archived and cannot be edited or changed.
+                    </div>
+                    {% elif person['status'] == 'Inactive' %}
+                    <div class="status-info">
+                        <strong>ℹ️ Archival Information:</strong> This identity can only be archived 5 years after being marked inactive.
+                    </div>
+                    {% endif %}
+                </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-success btn-lg" {% if person['status'] == 'Archived' %}disabled{% endif %}>
+                    <i class="bi bi-check-circle"></i> Save Changes
+                </button>
+            </div>
+
+        </form>
+
+        <div class="text-center mt-4">
+            <a href="/view/{{ person['id'] }}" class="btn btn-secondary me-2">View Identity</a>
+            <a href="/view_all" class="btn btn-secondary me-2">All Identities</a>
+            <a href="/" class="btn btn-outline-secondary">Home</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const subCategory = "{{ person['sub_category'] }}";
+        const currentStatus = "{{ person['status'] }}";
+        const statusSelect = document.getElementById("statusSelect");
+        const editForm = document.getElementById("editForm");
+        
+        // Show relevant section based on sub_category
+        if (subCategory.includes("Undergraduate") || subCategory.includes("Continuing") || subCategory.includes("PhD") || subCategory.includes("International")) {
+            document.getElementById("studentFields").classList.add("active");
+        } else if (subCategory.includes("Tenured") || subCategory.includes("Adjunct") || subCategory.includes("Visiting")) {
+            document.getElementById("facultyFields").classList.add("active");
+        } else if (subCategory.includes("Administrative") || subCategory.includes("Technical") || subCategory.includes("Temporary")) {
+            document.getElementById("staffFields").classList.add("active");
+        } else if (subCategory.includes("Contractors") || subCategory.includes("Alumni")) {
+            document.getElementById("externalFields").classList.add("active");
+        }
+
+        // Status change validation and confirmation
+        if (statusSelect) {
+            statusSelect.addEventListener("change", function() {
+                const newStatus = this.value;
+                if (newStatus) {
+                    const statusMessages = {
+                        'Active': '✓ Identity will be activated',
+                        'Suspended': '⚠ Identity will be suspended temporarily',
+                        'Inactive': '⏸ Identity will be marked as inactive',
+                        'Archived': '🗂 Identity will be permanently archived'
+                    };
+                    
+                    // You can add additional confirmation here if needed
+                    console.log('Status change to: ' + newStatus + ' - ' + statusMessages[newStatus]);
+                }
+            });
+        }
+
+        // Form submission confirmation
+        editForm.addEventListener("submit", function(e) {
+            const newStatus = statusSelect ? statusSelect.value : "";
+            if (newStatus && currentStatus !== newStatus) {
+                const confirmMessage = `Are you sure you want to change the status from ${currentStatus} to ${newStatus}?`;
+                if (!confirm(confirmMessage)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

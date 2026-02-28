@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Create New Identity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .alert-errors {
+            display: none;
+        }
+        .category-section {
+            display: none;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            background-color: #f8f9fa;
+        }
+        .category-section.active {
+            display: block;
+        }
+        .section-title {
+            color: #495057;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        
+        <h2 class="mb-4 text-center">Create New Identity</h2>
+
+        <!-- Error Messages -->
+        {% if errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0 mt-2">
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        <form method="POST" id="createForm">
+
+            <!-- ==================== COMMON DATA ==================== -->
+            <div class="mb-3">
+                <label class="form-label">Identity Category <span class="text-danger">*</span></label>
+                <select name="type" id="type" class="form-select" required>
+                    <option value="">Select Main Category</option>
+                    <option value="Student" {% if request.form.get('type')=='Student' %}selected{% endif %}>Student</option>
+                    <option value="Faculty" {% if request.form.get('type')=='Faculty' %}selected{% endif %}>Faculty</option>
+                    <option value="Staff" {% if request.form.get('type')=='Staff' %}selected{% endif %}>Staff</option>
+                    <option value="External" {% if request.form.get('type')=='External' %}selected{% endif %}>External</option>
+                </select>
+                <div class="error-message" id="type_error"></div>
+            </div>
+
+            <div id="subCategoryContainer">
+                <div class="mb-3">
+                    <label class="form-label">Sub-Category <span class="text-danger">*</span></label>
+                    <select name="sub_category" id="sub_category" class="form-select" required>
+                        <option value="">Select Sub-Category</option>
+                    </select>
+                    <div class="error-message" id="sub_category_error"></div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <h5 class="mt-4 mb-3">User Data</h5>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">First Name <span class="text-danger">*</span></label>
+                    <input type="text" name="first_name" id="first_name" class="form-control" value="{{request.form.get('first_name','')}}" required>
+                    <div class="error-message" id="first_name_error"></div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" name="last_name" id="last_name" class="form-control" value="{{request.form.get('last_name','')}}" required>
+                    <div class="error-message" id="last_name_error"></div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                <input type="date" name="dob" id="dob" class="form-control" required value="{{request.form.get('dob','')}}">
+                <div class="error-message" id="dob_error"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Place of Birth</label>
+                <input type="text" name="place_of_birth" id="place_of_birth" class="form-control" value="{{request.form.get('place_of_birth','')}}">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nationality</label>
+                    <input type="text" name="nationality" id="nationality" class="form-control" value="{{request.form.get('nationality','')}}">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Gender</label>
+                    <select name="gender" id="gender" class="form-select">
+                        <option value="">Select Gender</option>
+                        <option value="Male" {% if request.form.get('gender')=='Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if request.form.get('gender')=='Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if request.form.get('gender')=='Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Personal Email Address <span class="text-danger">*</span></label>
+                <input type="email" name="email" id="email" class="form-control" required value="{{request.form.get('email','')}}">
+                <div class="error-message" id="email_error"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                <input type="text" name="phone" id="phone" class="form-control" placeholder="Only numbers" value="{{request.form.get('phone','')}}">
+                <div class="error-message" id="phone_error"></div>
+            </div>
+
+            <!-- ==================== STUDENT FIELDS ==================== -->
+            <div id="studentFields" class="category-section {% if request.form.get('type') == 'Student' %}active{% endif %}">
+                <h5 class="section-title">Student Information</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label">High School Diploma Type</label>
+                    <input type="text" name="student_high_school_diploma_type" id="student_diploma_type" class="form-control" value="{{request.form.get('student_high_school_diploma_type','')}}">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Diploma Year</label>
+                        <input type="number" name="student_high_school_diploma_year" id="student_diploma_year" class="form-control" min="1900" max="2100" value="{{request.form.get('student_high_school_diploma_year','')}}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Honors</label>
+                        <input type="text" name="student_high_school_honors" id="student_honors" class="form-control" value="{{request.form.get('student_high_school_honors','')}}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Major/Program <span class="text-danger">*</span></label>
+                    <input type="text" name="student_major" id="student_major" class="form-control" value="{{request.form.get('student_major','')}}">
+                    <div class="error-message" id="student_major_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Entry Year <span class="text-danger">*</span></label>
+                    <input type="number" name="student_entry_year" id="student_entry_year" class="form-control" min="1900" max="2100" value="{{request.form.get('student_entry_year','')}}">
+                    <div class="error-message" id="student_entry_year_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Faculty & Department <span class="text-danger">*</span></label>
+                    <input type="text" name="student_faculty_department" id="student_faculty_department" class="form-control" value="{{request.form.get('student_faculty_department','')}}">
+                    <div class="error-message" id="student_faculty_department_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Group</label>
+                    <input type="text" name="student_group" id="student_group" class="form-control" value="{{request.form.get('student_group','')}}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Scholarship Status</label>
+                    <select name="student_scholarship_status" id="student_scholarship_status" class="form-select">
+                        <option value="">Select</option>
+                        <option value="Yes" {% if request.form.get('student_scholarship_status')=='Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if request.form.get('student_scholarship_status')=='No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ==================== FACULTY FIELDS ==================== -->
+            <div id="facultyFields" class="category-section {% if request.form.get('type') == 'Faculty' %}active{% endif %}">
+                <h5 class="section-title">Faculty Information</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label">Rank <span class="text-danger">*</span></label>
+                    <input type="text" name="faculty_rank" id="faculty_rank" class="form-control" value="{{request.form.get('faculty_rank','')}}">
+                    <div class="error-message" id="faculty_rank_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Employment Category</label>
+                    <input type="text" name="faculty_employment_category" id="faculty_employment_category" class="form-control" value="{{request.form.get('faculty_employment_category','')}}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Appointment Start Date <span class="text-danger">*</span></label>
+                    <input type="date" name="faculty_appointment_start_date" id="faculty_appointment_start_date" class="form-control" value="{{request.form.get('faculty_appointment_start_date','')}}">
+                    <div class="error-message" id="faculty_appointment_start_date_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Primary Department <span class="text-danger">*</span></label>
+                    <input type="text" name="faculty_primary_department" id="faculty_primary_department" class="form-control" value="{{request.form.get('faculty_primary_department','')}}">
+                    <div class="error-message" id="faculty_primary_department_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Secondary Departments</label>
+                    <input type="text" name="faculty_secondary_departments" id="faculty_secondary_departments" class="form-control" value="{{request.form.get('faculty_secondary_departments','')}}">
+                </div>
+
+                <h6 class="mt-3 mb-2">Office Location</h6>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Building</label>
+                        <input type="text" name="faculty_office_building" id="faculty_office_building" class="form-control" value="{{request.form.get('faculty_office_building','')}}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Floor</label>
+                        <input type="text" name="faculty_office_floor" id="faculty_office_floor" class="form-control" value="{{request.form.get('faculty_office_floor','')}}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Room</label>
+                        <input type="text" name="faculty_office_room" id="faculty_office_room" class="form-control" value="{{request.form.get('faculty_office_room','')}}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">PhD Institution</label>
+                    <input type="text" name="faculty_phd_institution" id="faculty_phd_institution" class="form-control" value="{{request.form.get('faculty_phd_institution','')}}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Research Areas</label>
+                    <textarea name="faculty_research_areas" id="faculty_research_areas" class="form-control" rows="3">{{request.form.get('faculty_research_areas','')}}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Habilitation to Supervise Research</label>
+                    <select name="faculty_habilitation_supervise" id="faculty_habilitation_supervise" class="form-select">
+                        <option value="">Select</option>
+                        <option value="Yes" {% if request.form.get('faculty_habilitation_supervise')=='Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if request.form.get('faculty_habilitation_supervise')=='No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <h6 class="mt-3 mb-2">Contract Information</h6>
+                <div class="mb-3">
+                    <label class="form-label">Contract Type</label>
+                    <input type="text" name="faculty_contract_type" id="faculty_contract_type" class="form-control" value="{{request.form.get('faculty_contract_type','')}}">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contract Start Date</label>
+                        <input type="date" name="faculty_contract_start_date" id="faculty_contract_start_date" class="form-control" value="{{request.form.get('faculty_contract_start_date','')}}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contract End Date</label>
+                        <input type="date" name="faculty_contract_end_date" id="faculty_contract_end_date" class="form-control" value="{{request.form.get('faculty_contract_end_date','')}}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Teaching Hours</label>
+                    <input type="number" name="faculty_teaching_hours" id="faculty_teaching_hours" class="form-control" value="{{request.form.get('faculty_teaching_hours','')}}">
+                </div>
+            </div>
+
+            <!-- ==================== STAFF FIELDS ==================== -->
+            <div id="staffFields" class="category-section {% if request.form.get('type') == 'Staff' %}active{% endif %}">
+                <h5 class="section-title">Staff Information</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label">Assigned Department/Service <span class="text-danger">*</span></label>
+                    <input type="text" name="staff_assigned_department" id="staff_assigned_department" class="form-control" value="{{request.form.get('staff_assigned_department','')}}">
+                    <div class="error-message" id="staff_assigned_department_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Job Title <span class="text-danger">*</span></label>
+                    <input type="text" name="staff_job_title" id="staff_job_title" class="form-control" value="{{request.form.get('staff_job_title','')}}">
+                    <div class="error-message" id="staff_job_title_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Grade</label>
+                    <input type="text" name="staff_grade" id="staff_grade" class="form-control" value="{{request.form.get('staff_grade','')}}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Date of Entry to University <span class="text-danger">*</span></label>
+                    <input type="date" name="staff_entry_date" id="staff_entry_date" class="form-control" value="{{request.form.get('staff_entry_date','')}}">
+                    <div class="error-message" id="staff_entry_date_error"></div>
+                </div>
+            </div>
+
+            <!-- ==================== EXTERNAL FIELDS ==================== -->
+            <div id="externalFields" class="category-section {% if request.form.get('type') == 'External' %}active{% endif %}">
+                <h5 class="section-title">External Member Information</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label">Organization <span class="text-danger">*</span></label>
+                    <input type="text" name="external_organization" id="external_organization" class="form-control" value="{{request.form.get('external_organization','')}}">
+                    <div class="error-message" id="external_organization_error"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Contact Person</label>
+                    <input type="text" name="external_contact_person" id="external_contact_person" class="form-control" value="{{request.form.get('external_contact_person','')}}">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-4">
+                Create Identity
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="/" class="text-decoration-none">Back to Home</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const SUB_CATEGORIES = {
+        'Student': ['Undergraduate', 'Continuing Education', 'PhD Candidates', 'International/Exchange'],
+        'Faculty': ['Tenured', 'Adjunct/Part-time', 'Visiting Researchers'],
+        'Staff': ['Administrative', 'Technical', 'Temporary'],
+        'External': ['Contractors/Vendors', 'Alumni']
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("createForm");
+        const typeSelect = document.getElementById("type");
+        const subCategorySelect = document.getElementById("sub_category");
+        const subCategoryContainer = document.getElementById("subCategoryContainer");
+        const PRESELECT_SUB = "{{ request.form.get('sub_category','')|e }}";
+
+        // Initialize sub-category dropdown
+        function populateSubCategories(selectedType, preselectedSub) {
+            subCategorySelect.innerHTML = '<option value="">Select Sub-Category</option>';
+            if (selectedType && SUB_CATEGORIES[selectedType]) {
+                SUB_CATEGORIES[selectedType].forEach(subCat => {
+                    const option = document.createElement("option");
+                    option.value = subCat;
+                    option.textContent = subCat;
+                    subCategorySelect.appendChild(option);
+                });
+                subCategoryContainer.style.display = "block";
+                if (preselectedSub) {
+                    try { subCategorySelect.value = preselectedSub; } catch(e) {}
+                }
+            } else {
+                subCategoryContainer.style.display = "none";
+            }
+
+            // Reset category sections and show appropriate fields
+            document.querySelectorAll(".category-section").forEach(el => el.classList.remove("active"));
+            toggleFields();
+        }
+
+        typeSelect.addEventListener("change", function() {
+            populateSubCategories(this.value, '');
+        });
+
+        // Toggle category fields based on sub-category selection
+        subCategorySelect.addEventListener("change", toggleFields);
+
+        // Run initial population on load so fields show after server validation errors
+        (function runInitialPopulate(){
+            const initialType = typeSelect.value;
+            if (initialType) {
+                populateSubCategories(initialType, PRESELECT_SUB);
+            }
+        })();
+
+        function toggleFields() {
+            const subCat = subCategorySelect.value;
+            
+            // Hide all sections
+            document.getElementById("studentFields").classList.remove("active");
+            document.getElementById("facultyFields").classList.remove("active");
+            document.getElementById("staffFields").classList.remove("active");
+            document.getElementById("externalFields").classList.remove("active");
+            
+            // Show relevant sections
+            if (subCat.includes("Undergraduate") || subCat.includes("Continuing") || subCat.includes("PhD") || subCat.includes("International")) {
+                document.getElementById("studentFields").classList.add("active");
+            } else if (subCat.includes("Tenured") || subCat.includes("Adjunct") || subCat.includes("Visiting")) {
+                document.getElementById("facultyFields").classList.add("active");
+            } else if (subCat.includes("Administrative") || subCat.includes("Technical") || subCat.includes("Temporary")) {
+                document.getElementById("staffFields").classList.add("active");
+            } else if (subCat.includes("Contractors") || subCat.includes("Alumni")) {
+                document.getElementById("externalFields").classList.add("active");
+            }
+        }
+
+        // Form validation
+        form.addEventListener("submit", function(e) {
+            document.querySelectorAll(".error-message").forEach(el => el.innerText = "");
+            let valid = true;
+
+            const type = document.getElementById("type").value.trim();
+            if (!type) {
+                document.getElementById("type_error").innerText = "Please select a type";
+                valid = false;
+            }
+
+            const subCategory = document.getElementById("sub_category").value.trim();
+            if (!subCategory && type) {
+                document.getElementById("sub_category_error").innerText = "Please select a sub-category";
+                valid = false;
+            }
+
+            const firstName = document.getElementById("first_name").value.trim();
+            if (!firstName) {
+                document.getElementById("first_name_error").innerText = "First name cannot be empty";
+                valid = false;
+            } else if (firstName.length < 2) {
+                document.getElementById("first_name_error").innerText = "First name must be at least 2 characters";
+                valid = false;
+            }
+
+            const lastName = document.getElementById("last_name").value.trim();
+            if (!lastName) {
+                document.getElementById("last_name_error").innerText = "Last name cannot be empty";
+                valid = false;
+            } else if (lastName.length < 2) {
+                document.getElementById("last_name_error").innerText = "Last name must be at least 2 characters";
+                valid = false;
+            }
+
+            const dob = document.getElementById("dob").value;
+            if (!dob) {
+                document.getElementById("dob_error").innerText = "Date of birth cannot be empty";
+                valid = false;
+            } else {
+                const dobDate = new Date(dob);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                dobDate.setHours(0, 0, 0, 0);
+
+                if (dobDate > today) {
+                    document.getElementById("dob_error").innerText = "Birth date cannot be in the future";
+                    valid = false;
+                } else {
+                    const age = (today - dobDate) / (1000 * 60 * 60 * 24 * 365.25);
+                    if (age < 16) {
+                        document.getElementById("dob_error").innerText = "You must be at least 16 years old";
+                        valid = false;
+                    }
+                }
+            }
+
+            const email = document.getElementById("email").value.trim();
+            if (!email) {
+                document.getElementById("email_error").innerText = "Email cannot be empty";
+                valid = false;
+            } else {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    document.getElementById("email_error").innerText = "Invalid email format";
+                    valid = false;
+                }
+            }
+
+            const phone = document.getElementById("phone").value.trim();
+            if (phone && !/^\d+$/.test(phone)) {
+                document.getElementById("phone_error").innerText = "Phone must contain only numbers";
+                valid = false;
+            }
+
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+</body>
+</html>
